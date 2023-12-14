@@ -11,7 +11,7 @@
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
-        <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@order.Products" TItem="Product">
+        <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@order.Products.AsQueryable()" TItem="Product">
             <Template Context="product">
                 <ProductItem product=@product />
             </Template>
