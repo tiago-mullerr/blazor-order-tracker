@@ -1,0 +1,25 @@
+﻿<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+    <RadzenImage Path="@product.ImageUrl" Class="rz-border-radius-10" Style="width: 80px; height: 80px;" AlternateText="@(product.Title)" />
+    <RadzenStack Gap="0">
+        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0">
+            <strong>
+                @(product.Title)
+            </strong>
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.Body2" Class="rz-mb-0">
+            @product.Description
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.Caption" Class="rz-mb-0">
+            Price: @($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", product.Price)}")
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.Caption" Class="rz-mb-0">
+            Quantity: @product.Quantity
+        </RadzenText>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public Product product { get; set; }
+}
+
