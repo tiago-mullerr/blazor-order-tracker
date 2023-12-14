@@ -36,12 +36,12 @@ namespace OrderTracker.Server.Controllers
         [HttpGet]
         public List<Order> Get()
         {
-            var orders = new AutoFaker<Order>()
-                .RuleFor(x => x.Id, new Faker().Random.Int(1, 1000))
-                .Generate(10);
+            var orders = new AutoFaker<Order>().Generate(10);
 
             orders.ForEach(f =>
             {
+                f.Id = new Faker().Random.Int(1, 1000);
+                f.Step = new Faker().Random.Int(1, 4);
                 f.Products = _productGenerator.GenerateBetween(2, 5);
                 f.Customer = new AutoFaker<Customer>()
                     .RuleFor(x => x.Address, new Faker().Address.StreetAddress())

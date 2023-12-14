@@ -1,0 +1,19 @@
+﻿@using OrderTracker.Shared.Models
+@using Radzen;
+@using Radzen.Blazor;
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-p-4">
+    <RadzenSteps ShowStepsButtons=false SelectedIndex="@order.Step">
+        <Steps>
+            <RadzenStepsItem Disabled=@(order.Step != 1) Text="Shipping Soon"></RadzenStepsItem>
+            <RadzenStepsItem Disabled=@(order.Step != 2) Text="Shipped"></RadzenStepsItem>
+            <RadzenStepsItem Disabled=@(order.Step != 3) Text="Out for delivery"></RadzenStepsItem>
+            <RadzenStepsItem Disabled=@(order.Step != 4) Text="Delivered"></RadzenStepsItem>
+        </Steps>
+    </RadzenSteps>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public Order order { get; set; } = new();
+}
