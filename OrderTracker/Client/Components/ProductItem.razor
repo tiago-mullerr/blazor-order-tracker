@@ -1,0 +1,24 @@
+﻿@using OrderTracker.Shared.Models
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
+    <RadzenStack Gap="0">
+        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0">
+            <strong>
+                @(product.Title)
+            </strong>
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.Body2" Class="rz-mb-0">
+            @product.Description
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.Caption" Class="rz-mb-0">
+            Price: @($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", product.Price)}")
+        </RadzenText>
+        <RadzenText TextStyle="TextStyle.Caption" Class="rz-mb-0">
+            Quantity: @product.Quantity
+        </RadzenText>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public Product product { get; set; } = new Product();
+}
