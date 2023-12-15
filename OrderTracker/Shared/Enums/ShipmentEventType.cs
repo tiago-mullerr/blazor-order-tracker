@@ -12,7 +12,7 @@ namespace OrderTracker.Shared.Enums
         public static string SHIPPING_SOON = "Shipping Soon";
         public static string SHIPPED = "Shipped";
         public static string OUT_FOR_DELIVERY = "Out for delivery";
-        public static string DELIVERED = "Shipping Soon";
+        public static string DELIVERED = "Delivered";
 
         public static string ParseShipmentEvent(ShipmentEventTypeEnum shipmentEventType)
         {

@@ -11,12 +11,21 @@ namespace OrderTracker.Server.Controllers
     public class OrderTrackerController : ControllerBase
     {
         [HttpGet("{orderId}")]
-        public IQueryable<ShipmentEvent> Get(int orderId)
+        public IActionResult Get(int orderId)
         {
-            return new AutoFaker<ShipmentEvent>()
-                    .RuleFor(x => x.EventType, new Faker().PickRandom<ShipmentEventTypeEnum>())
-                    .RuleFor(x => x.EventDate, new Faker().Date.Between(DateTime.Now, DateTime.Now.AddDays(60)))
-                    .Generate(4).AsQueryable();
+            var addresses = new AutoFaker<ShipmentEvent>().GenerateBetween(1, 4);
+
+            addresses.ForEach(f =>
+            {
+                f.EventDate = new Faker().Date.Between(DateTime.Now, DateTime.Now.AddDays(60));
+                f.EventType = new Faker().PickRandom<ShipmentEventTypeEnum>();
+                f.FromAddress = new Faker().Address.StreetAddress(true);
+                f.ToAddress = new Faker().Address.StreetAddress(true);
+            });
+
+            addresses = addresses.OrderBy(o => o.EventDate).ThenBy(o => o.EventType).ToList();
+
+            return Ok(addresses.AsQueryable());
         }
     }
 }

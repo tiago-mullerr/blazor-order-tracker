@@ -27,12 +27,12 @@
     {
         <RadzenRow>
             <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="false" PageSize="30" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false"
-                            Data="@order.ShipmentEvents" TItem="ShipmentEvent" ColumnWidth="300px">
+                            Data="@ShipmentEvents" TItem="ShipmentEvent" ColumnWidth="300px">
                 <Columns>
                     <RadzenDataGridColumn TItem="ShipmentEvent" Property="EventDate" FormatString="{0:d}" Filterable="false" Title="Event Date" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
-                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="ShipmentEventName" Title="Event" Frozen="true" Width="160px" />
-                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="FromAddress" Title="From" Frozen="true" Width="160px" />
-                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="ToAddress" Title="To" Frozen="true" Width="160px" />
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="ShipmentEventName" Title="Event" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="FromAddress" Title="From" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="ToAddress" Title="To" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
                 </Columns>
             </RadzenDataGrid>
         </RadzenRow>
