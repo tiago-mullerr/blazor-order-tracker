@@ -35,7 +35,6 @@ namespace OrderTracker.Server.Controllers
                 f.Id = new Faker().Random.Int(1, 1000);
                 f.Step = new Faker().Random.Int(1, 4);
                 f.Products = _productGenerator.GenerateBetween(2, 5);
-
                 f.Customer = new AutoFaker<Customer>()
                     .RuleFor(x => x.Address, new Faker().Address.StreetAddress())
                     .RuleFor(x => x.City, new Faker().Address.City())
@@ -44,6 +43,7 @@ namespace OrderTracker.Server.Controllers
                     .RuleFor(x => x.LastName, new Faker().Name.LastName())
                     .RuleFor(x => x.Id, new Faker().Random.Int(1));
             });
+
             Thread.Sleep(1500);
             return orders;
         }

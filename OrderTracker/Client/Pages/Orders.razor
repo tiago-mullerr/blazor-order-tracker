@@ -13,7 +13,7 @@ else
 {
     <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@orders" TItem="Order">
         <Template Context="order">
-            <OrderItem order=@order />
+            <OrderItem order=@order OnCancelOrderCallback="CancelOrder" />
         </Template>
     </RadzenDataList>
 }
@@ -25,5 +25,10 @@ else
     {
         var response = await Http.GetFromJsonAsync<List<Order>>("Order");
         if (response != null) orders = response.AsQueryable();
+    }
+
+    private void CancelOrder(int orderId)
+    {
+        if (orders != null) orders = orders.Where(w => w.Id != orderId).AsQueryable();
     }
 }
