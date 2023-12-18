@@ -40,7 +40,7 @@
     {
         var result = await this.DialogService.OpenAsync<OrderTrackerDialog>($"Order Tracker {order.Id}",
             new Dictionary<string, object>() { { "order", order } },
-            new DialogOptions() { Width = "80vw", Height = "auto", Resizable = true, Draggable = true });
+            new DialogOptions() { Width = "80vw", Height = "auto", Resizable = false, Draggable = false });
     }
 
     public async Task ShowConfirmationDialog()

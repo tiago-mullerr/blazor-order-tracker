@@ -1,0 +1,43 @@
+﻿@using OrderTracker.Shared.Models
+<RadzenTemplateForm Data="@order" TItem="Order" Submit="@((Order args) => { CreateOrderHandler(args).ConfigureAwait(false); })">
+    <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenStack>
+                <RadzenFieldset Text="Order Info">
+                    <RadzenStack Gap="1rem">
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="First Name" Component="FirstName" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenTextBox Style="width: 100%;" Name="FirstName" @bind-Value=@order.Customer.FirstName />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="Last Name" Component="LastName" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenTextBox Style="width: 100%;" Name="LastName" @bind-Value=@order.Customer.LastName />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem" Style="margin: 1rem 0;">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Create" />
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" />
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter]
+    public EventCallback<Order> OnCreateOrderCallback { get; set; }
+
+    public Order order { get; set; } = new Order();
+
+    private async Task CreateOrderHandler(Order order)
+    {
+        await OnCreateOrderCallback.InvokeAsync(order);
+    }
+}
