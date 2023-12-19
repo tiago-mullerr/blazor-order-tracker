@@ -1,0 +1,53 @@
+﻿@using OrderTracker.Shared.Enums
+@using OrderTracker.Shared.Models
+@using Radzen;
+@using Radzen.Blazor;
+@inject HttpClient Http
+
+<RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-p-4">
+    <RadzenRow JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+        <RadzenSteps ShowStepsButtons=false SelectedIndex="@order.Step">
+            <Steps>
+                <RadzenStepsItem Disabled=@(order.Step != (int)ShipmentEventTypeEnum.PURCHASE_CONFIRMED) Text="@ShipmentEventType.PURCHASE_CONFIRMED"></RadzenStepsItem>
+                <RadzenStepsItem Disabled=@(order.Step != (int)ShipmentEventTypeEnum.SHIPPING_SOON) Text="@ShipmentEventType.SHIPPING_SOON"></RadzenStepsItem>
+                <RadzenStepsItem Disabled=@(order.Step != (int)ShipmentEventTypeEnum.SHIPPED) Text="@ShipmentEventType.SHIPPED"></RadzenStepsItem>
+                <RadzenStepsItem Disabled=@(order.Step != (int)ShipmentEventTypeEnum.OUT_FOR_DELIVERY) Text="@ShipmentEventType.OUT_FOR_DELIVERY"></RadzenStepsItem>
+                <RadzenStepsItem Disabled=@(order.Step != (int)ShipmentEventTypeEnum.DELIVERED) Text="@ShipmentEventType.DELIVERED"></RadzenStepsItem>
+            </Steps>
+        </RadzenSteps>
+    </RadzenRow>
+    <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
+    @if (ShipmentEvents?.Count() == 0)
+    {
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="text-align: center">
+            <h5>No events for now, please check again later.</h5>
+        </RadzenRow>
+    }
+    else
+    {
+        <RadzenRow>
+            <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="false" PageSize="30" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false"
+                            Data="@ShipmentEvents" TItem="ShipmentEvent" ColumnWidth="300px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="EventDate" FormatString="{0:d}" Filterable="false" Title="Event Date" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="ShipmentEventName" Title="Event" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="FromAddress" Title="From" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="ShipmentEvent" Property="ToAddress" Title="To" Frozen="true" Width="160px" TextAlign="TextAlign.Center" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenRow>
+    }
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public Order order { get; set; } = new();
+
+    public IQueryable<ShipmentEvent>? ShipmentEvents { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var events = await Http.GetFromJsonAsync<List<ShipmentEvent>>($"OrderTracker/{order.Id}");
+        if (events != null) ShipmentEvents = events.AsQueryable();
+    }
+}

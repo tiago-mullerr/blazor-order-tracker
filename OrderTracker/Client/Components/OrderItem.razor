@@ -1,7 +1,10 @@
 ﻿@using AutoBogus
 @using Bogus
 @using OrderTracker.Shared.Models
-<RadzenCard Style="width: 50%" Class="rz-border-radius-3">
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<RadzenCard Class="rz-border-radius-3">
     <RadzenRow Gap="0.5rem">
         <RadzenColumn Size="8" Class="rz-text-truncate">
             <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{order.Id}") Class="rz-mr-1" IsPill="true" />
@@ -11,7 +14,7 @@
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
-        <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@order.Products" TItem="Product">
+        <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@order.Products.AsQueryable()" TItem="Product">
             <Template Context="product">
                 <ProductItem product=@product />
             </Template>
@@ -19,9 +22,46 @@
     </RadzenRow>
     <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
     <CustomerWidget customer=@order.Customer />
+    <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem" Style="margin: 1rem 0;">
+        <RadzenButton Click="@(args => ShowInlineDialog())" @onclick:stopPropagation="true" Text="Track" ButtonStyle="ButtonStyle.Success" />
+        <RadzenButton Click="@(args => ShowConfirmationDialog())" Text="Cancel" ButtonStyle="ButtonStyle.Danger" />
+    </RadzenStack>
 </RadzenCard>
 
 @code {
     [Parameter]
     public Order order { get; set; } = new Order();
+
+    [Parameter]
+    public EventCallback<int> OnCancelOrderCallback { get; set; }
+
+    public async Task ShowInlineDialog()
+    {
+        var result = await this.DialogService.OpenAsync<OrderTrackerDialog>($"Order Tracker {order.Id}",
+            new Dictionary<string, object>() { { "order", order } },
+            new DialogOptions() { Width = "80vw", Height = "auto", Resizable = false, Draggable = false });
+    }
+
+    public async Task ShowConfirmationDialog()
+    {
+        var isConfirmed = await this.DialogService.Confirm("Are you sure you want to cancel this order?", "Cancel Order", new ConfirmOptions()
+            {
+                CancelButtonText = "No",
+                OkButtonText = "Yes",
+                Draggable = false,
+            });
+
+        if (isConfirmed ?? false)
+        {
+            NotificationService.Notify(NotificationSeverity.Success,
+                "Order Cancellation Requested",
+                "We successfully received your order cancellation request, you will be notified via email when it is completed",
+                5000,
+                closeOnClick: true
+            );
+
+            await OnCancelOrderCallback.InvokeAsync(order.Id);
+        }
+    }
 }

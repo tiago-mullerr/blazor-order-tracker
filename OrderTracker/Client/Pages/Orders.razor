@@ -2,6 +2,7 @@
 @using OrderTracker.Client.Components
 @using OrderTracker.Shared.Models
 @inject HttpClient Http
+@inject DialogService DialogService 
 
 @if (orders == null)
 {
@@ -11,18 +12,42 @@
 }
 else
 {
-    <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@orders" TItem="Order">
-        <Template Context="order">
-            <OrderItem order=@order/>
-        </Template>
-    </RadzenDataList>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" JustifyContent="JustifyContent.End" Gap="1rem" Wrap="FlexWrap.Wrap" class="rz-p-12">
+        <RadzenButton Icon="add_circle_outline" Click="@(args => ShowAddOrderDialog())" @onclick:stopPropagation="true" Text="Add Order" ButtonStyle="ButtonStyle.Primary" />
+        <RadzenDataList PageSize="2" WrapItems="true" AllowPaging="true" Data="@orders" TItem="Order">
+            <Template Context="order">
+                <OrderItem order=@order OnCancelOrderCallback="CancelOrder" />
+            </Template>
+        </RadzenDataList>
+    </RadzenStack>
 }
 
 @code {
-    private List<Order>? orders;
+    private IQueryable<Order>? orders;
 
     protected override async Task OnInitializedAsync()
     {
-        orders = await Http.GetFromJsonAsync<List<Order>>("Order");
+        var response = await Http.GetFromJsonAsync<List<Order>>("Order");
+        if (response != null) orders = response.AsQueryable();
+    }
+
+    private async Task ShowAddOrderDialog()
+    {
+        var result = await this.DialogService.OpenAsync<CreateOrderDialog>($"Create New Order",
+            new Dictionary<string, object>() { { "OnCreateOrderCallback", EventCallback.Factory.Create<Order>(this, AddOrder) } },
+            new DialogOptions() { Width = "80vw", Height = "auto", Resizable = false, Draggable = false });
+    }
+
+    public void AddOrder(Order order)
+    {
+        var ordersCopy = orders != null ? orders.ToList() : new List<Order>();
+        ordersCopy.Insert(0, order);
+        orders = ordersCopy.AsQueryable();
+        DialogService.Close();
+    }
+
+    private void CancelOrder(int orderId)
+    {
+        if (orders != null) orders = orders.Where(w => w.Id != orderId).AsQueryable();
     }
 }

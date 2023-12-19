@@ -12,6 +12,7 @@ namespace OrderTracker.Shared.Models
         {
             Customer = new Customer();
             Products = new List<Product>();
+            ShipmentEvents = new List<ShipmentEvent>();
         }
 
         public int Id { get; set; }
@@ -32,8 +33,12 @@ namespace OrderTracker.Shared.Models
             }
         }
 
+        public int Step { get; set; }
+
         public Customer Customer { get; set; }
 
         public List<Product> Products { get; set; }
+
+        public List<ShipmentEvent> ShipmentEvents { get; set; }
     }
 }

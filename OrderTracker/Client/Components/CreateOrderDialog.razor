@@ -1,0 +1,125 @@
+﻿@using OrderTracker.Shared.Models
+@inject HttpClient Http
+@inject DialogService DialogService
+
+<RadzenTemplateForm @ref=form Data="@order" TItem="Order" Submit="@((Order args) => { CreateOrderHandler(args).ConfigureAwait(false); })">
+    <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenStack>
+                <RadzenFieldset Text="Order Info">
+                    <RadzenStack Gap="1rem">
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="First Name" Component="FirstName" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenTextBox Style="width: 100%;" Name="FirstName" @bind-Value=@order.Customer.FirstName />
+                                <RadzenRequiredValidator Component="FirstName" Text="First name is required" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="Last Name" Component="LastName" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenTextBox Style="width: 100%;" Name="LastName" @bind-Value=@order.Customer.LastName />
+                                <RadzenRequiredValidator Component="LastName" Text="Last name is required" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="Address" Component="Address" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="10">
+                                <RadzenTextBox Style="width: 100%;" Name="Address" @bind-Value=@order.Customer.Address />
+                                <RadzenRequiredValidator Component="Address" Text="Address is required" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="City" Component="City" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenTextBox Style="width: 100%;" Name="City" @bind-Value=@order.Customer.City />
+                                <RadzenRequiredValidator Component="City" Text="City is required" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="Country" Component="Country" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenTextBox Style="width: 100%;" Name="Country" @bind-Value=@order.Customer.Country />
+                                <RadzenRequiredValidator Component="Country" Text="Country is required" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenLabel Text="Select Products" Component="ProductList" Style="margin-right: 8px; vertical-align: middle;" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="10">
+                                <RadzenDropDown Data=@products
+                                                TValue="int"
+                                                Change=@((args) => UpdateProductList(args as EnumerableQuery<int>))
+                                                TextProperty="Title"
+                                                ValueProperty="Id" Name="ProductList"
+                                                Multiple=true AllowClear=true
+                                                Placeholder="Select products"
+                                                AllowFiltering=true
+                                                FilterAsYouType=true
+                                                FilterCaseSensitivity=@FilterCaseSensitivity.CaseInsensitive
+                                                Chips=true Style="width: 100%;" />
+                                <div hidden=@(ProductListValid) class="rz-message rz-messages-error ">Please select at least one product</div>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem" Style="margin: 1rem 0;">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Create" />
+        <RadzenButton Click="@(args => CloseDialog())" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" />
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter]
+    public EventCallback<Order> OnCreateOrderCallback { get; set; }
+
+    private RadzenTemplateForm<Order> form;
+
+    public Order order { get; set; } = new Order() { Id = new Random().Next(1, 2000) };
+
+    private List<Product> products { get; set; } = new List<Product>();
+
+    private bool ProductListValid { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var productList = await Http.GetFromJsonAsync<List<Product>>("product");
+        if (productList != null) products = productList;
+    }
+
+    private void UpdateProductList(EnumerableQuery<int> productIds)
+    {
+        if (productIds != null)
+        {
+            ProductListValid = productIds.Count() > 0;
+            order.Products = products.Where(w => productIds.Contains(w.Id)).ToList();
+        }
+    }
+
+    private void CloseDialog()
+    {
+        DialogService.Close();
+    }
+
+    private async Task CreateOrderHandler(Order order)
+    {
+        if (order.Products.Count == 0)
+        {
+            ProductListValid = false;
+        }
+        else if (form.IsValid)
+        {
+            await OnCreateOrderCallback.InvokeAsync(order);
+        }
+    }
+}

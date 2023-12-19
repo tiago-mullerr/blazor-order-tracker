@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderTracker.Server", "OrderTracker\Server\OrderTracker.Server.csproj", "{60690B7C-569A-4E03-9688-5489BBE6B358}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderTracker.Server", "OrderTracker\Server\OrderTracker.Server.csproj", "{60690B7C-569A-4E03-9688-5489BBE6B358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderTracker.Client", "OrderTracker\Client\OrderTracker.Client.csproj", "{84E1C85C-D246-4678-BD9C-822B4ACC891F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderTracker.Client", "OrderTracker\Client\OrderTracker.Client.csproj", "{84E1C85C-D246-4678-BD9C-822B4ACC891F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderTracker.Shared", "OrderTracker\Shared\OrderTracker.Shared.csproj", "{0BF85DD0-2E78-4FF7-A633-2A9231329547}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderTracker.Shared", "OrderTracker\Shared\OrderTracker.Shared.csproj", "{0BF85DD0-2E78-4FF7-A633-2A9231329547}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
