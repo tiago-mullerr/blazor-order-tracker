@@ -40,7 +40,10 @@ else
 
     public void AddOrder(Order order)
     {
-        Console.WriteLine(order);
+        var ordersCopy = orders != null ? orders.ToList() : new List<Order>();
+        ordersCopy.Insert(0, order);
+        orders = ordersCopy.AsQueryable();
+        DialogService.Close();
     }
 
     private void CancelOrder(int orderId)
