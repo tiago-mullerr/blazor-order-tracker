@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Components.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.DataProtection;
 using OrderTracker.Client;
 using Radzen;
 

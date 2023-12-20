@@ -80,6 +80,7 @@
 </RadzenTemplateForm>
 
 @code {
+
     [Parameter]
     public EventCallback<Order> OnCreateOrderCallback { get; set; }
 
@@ -95,6 +96,8 @@
     {
         var productList = await Http.GetFromJsonAsync<List<Product>>("product");
         if (productList != null) products = productList;
+        var existingOrder = await Http.GetFromJsonAsync<Order>("order/new-order-details");
+        if (existingOrder != null) order = existingOrder;
     }
 
     private void UpdateProductList(EnumerableQuery<int> productIds)
@@ -106,8 +109,9 @@
         }
     }
 
-    private void CloseDialog()
+    private async void CloseDialog()
     {
+        Http.PostAsJsonAsync<Order>("order/new-order-details", order);
         DialogService.Close();
     }
 
@@ -119,6 +123,12 @@
         }
         else if (form.IsValid)
         {
+            var requestMessage = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = new Uri("order/new-order-details")
+                };
+            await Http.SendAsync(requestMessage);
             await OnCreateOrderCallback.InvokeAsync(order);
         }
     }

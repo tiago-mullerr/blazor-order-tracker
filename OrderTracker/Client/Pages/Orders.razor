@@ -2,7 +2,7 @@
 @using OrderTracker.Client.Components
 @using OrderTracker.Shared.Models
 @inject HttpClient Http
-@inject DialogService DialogService 
+@inject DialogService DialogService
 
 @if (orders == null)
 {
@@ -35,7 +35,15 @@ else
     {
         var result = await this.DialogService.OpenAsync<CreateOrderDialog>($"Create New Order",
             new Dictionary<string, object>() { { "OnCreateOrderCallback", EventCallback.Factory.Create<Order>(this, AddOrder) } },
-            new DialogOptions() { Width = "80vw", Height = "auto", Resizable = false, Draggable = false });
+            new DialogOptions()
+                {
+                    Width = "80vw",
+                    Height = "auto",
+                    Resizable = false,
+                    Draggable = false,
+                    CloseDialogOnEsc = false,
+                    CloseDialogOnOverlayClick = false
+                });
     }
 
     public void AddOrder(Order order)

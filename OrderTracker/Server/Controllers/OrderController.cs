@@ -4,6 +4,7 @@ using Bogus;
 using Microsoft.AspNetCore.Mvc;
 using OrderTracker.Shared.Enums;
 using OrderTracker.Shared.Models;
+using OrderTracker.Shared.Services;
 
 namespace OrderTracker.Server.Controllers
 {
@@ -13,8 +14,10 @@ namespace OrderTracker.Server.Controllers
     {
         private readonly ILogger<OrderController> _logger;
         private readonly Faker<Product> _productGenerator;
+        private readonly SessionService _sessionService;
 
-        public OrderController(ILogger<OrderController> logger)
+        public OrderController(ILogger<OrderController> logger,
+            SessionService sessionService)
         {
             _logger = logger;
             _productGenerator = new AutoFaker<Product>()
@@ -23,6 +26,7 @@ namespace OrderTracker.Server.Controllers
                 .RuleFor(x => x.Quantity, new Faker().Random.Int(1, 100))
                 .RuleFor(x => x.Id, new Faker().Random.Int(1, 1000))
                 .RuleFor(x => x.Price, new Faker().Random.Decimal((decimal)0.01, (decimal)99.99));
+            _sessionService = sessionService;
         }
 
         [HttpGet]
@@ -46,6 +50,27 @@ namespace OrderTracker.Server.Controllers
 
             Thread.Sleep(1500);
             return orders;
+        }
+
+        [HttpGet("new-order-details")]
+        public async Task<IActionResult> GetPendingNewOrderDetails()
+        {
+            var existingPendingOrder = await _sessionService.GetExistingNewOrderTemplate();
+            return Ok(existingPendingOrder);
+        }
+
+        [HttpPost("new-order-details")]
+        public async Task<IActionResult> SavePendingNewOrderDetails(Order order)
+        {
+            await _sessionService.SaveKey("NewOrder", order);
+            return Ok();
+        }
+
+        [HttpDelete("new-order-details")]
+        public async Task<IActionResult> DeletePendingNewOrderDetails()
+        {
+            await _sessionService.ClearStorageKey("NewOrder");
+            return Ok();
         }
     }
 }

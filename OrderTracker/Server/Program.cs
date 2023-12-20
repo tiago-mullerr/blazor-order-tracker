@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Components.ProtectedBrowserStorage;
+using OrderTracker.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddScoped<SessionService>();
 
 var app = builder.Build();
 
