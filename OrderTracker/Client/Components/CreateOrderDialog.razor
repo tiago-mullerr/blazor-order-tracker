@@ -1,6 +1,6 @@
-﻿@using OrderTracker.Shared.Models
-@inject HttpClient Http
+﻿@inject HttpClient Http
 @inject DialogService DialogService
+@inject StateContainer StateContainer
 
 <RadzenTemplateForm @ref=form Data="@order" TItem="Order" Submit="@((Order args) => { CreateOrderHandler(args).ConfigureAwait(false); })">
     <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
@@ -83,7 +83,7 @@
     [Parameter]
     public EventCallback<Order> OnCreateOrderCallback { get; set; }
 
-    private RadzenTemplateForm<Order> form;
+    private RadzenTemplateForm<Order> form = new RadzenTemplateForm<Order>();
 
     public Order order { get; set; } = new Order() { Id = new Random().Next(1, 2000) };
 
@@ -95,6 +95,8 @@
     {
         var productList = await Http.GetFromJsonAsync<List<Product>>("product");
         if (productList != null) products = productList;
+        var existingOrder = StateContainer.GetState<Order>("NewOrder");
+        if (existingOrder != null) order = existingOrder;
     }
 
     private void UpdateProductList(EnumerableQuery<int> productIds)
@@ -108,6 +110,7 @@
 
     private void CloseDialog()
     {
+        StateContainer.SetState("NewOrder", order);
         DialogService.Close();
     }
 
@@ -119,6 +122,7 @@
         }
         else if (form.IsValid)
         {
+            StateContainer.ClearState("NewOrder");
             await OnCreateOrderCallback.InvokeAsync(order);
         }
     }
