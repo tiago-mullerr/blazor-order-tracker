@@ -1,6 +1,7 @@
 ﻿@using OrderTracker.Shared.Models
 @inject HttpClient Http
 @inject DialogService DialogService
+@inject SessionStorageAccessor SessionStorageAccessor
 
 <RadzenTemplateForm @ref=form Data="@order" TItem="Order" Submit="@((Order args) => { CreateOrderHandler(args).ConfigureAwait(false); })">
     <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
@@ -83,9 +84,9 @@
     [Parameter]
     public EventCallback<Order> OnCreateOrderCallback { get; set; }
 
-    private RadzenTemplateForm<Order> form;
+    private RadzenTemplateForm<Order> form = new RadzenTemplateForm<Order>();
 
-    public Order order { get; set; } = new Order() { Id = new Random().Next(1, 2000) };
+    public Order? order { get; set; } = new Order() { Id = new Random().Next(1, 2000) };
 
     private List<Product> products { get; set; } = new List<Product>();
 
@@ -95,6 +96,8 @@
     {
         var productList = await Http.GetFromJsonAsync<List<Product>>("product");
         if (productList != null) products = productList;
+        var existingOrder = await SessionStorageAccessor.GetValueAsync<string>("NewOrder");
+        if (existingOrder != null) order = JsonConvert.DeserializeObject<Order>(existingOrder);
     }
 
     private void UpdateProductList(EnumerableQuery<int> productIds)
@@ -106,8 +109,9 @@
         }
     }
 
-    private void CloseDialog()
+    private async Task CloseDialog()
     {
+        await SessionStorageAccessor.SetValueAsync("NewOrder", JsonConvert.SerializeObject(order));
         DialogService.Close();
     }
 
@@ -119,6 +123,7 @@
         }
         else if (form.IsValid)
         {
+            await SessionStorageAccessor.RemoveAsync("NewOrder");
             await OnCreateOrderCallback.InvokeAsync(order);
         }
     }
