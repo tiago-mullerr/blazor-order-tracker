@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using OrderTracker.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IProductService, ProductService>();
 
 var app = builder.Build();
 

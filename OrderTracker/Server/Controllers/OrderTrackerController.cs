@@ -1,6 +1,7 @@
 ﻿using AutoBogus;
 using Bogus;
 using Microsoft.AspNetCore.Mvc;
+using OrderTracker.Server.Services;
 using OrderTracker.Shared.Enums;
 using OrderTracker.Shared.Models;
 
@@ -10,22 +11,18 @@ namespace OrderTracker.Server.Controllers
     [Route("[controller]")]
     public class OrderTrackerController : ControllerBase
     {
+        private readonly IOrderService _orderService;
+
+        public OrderTrackerController(IOrderService orderService)
+        {
+            _orderService = orderService;
+        }
+
         [HttpGet("{orderId}")]
         public IActionResult Get(int orderId)
         {
-            var addresses = new AutoFaker<ShipmentEvent>().GenerateBetween(1, 4);
-
-            addresses.ForEach(f =>
-            {
-                f.EventDate = new Faker().Date.Between(DateTime.Now, DateTime.Now.AddDays(60));
-                f.EventType = new Faker().PickRandom<ShipmentEventTypeEnum>();
-                f.FromAddress = new Faker().Address.StreetAddress(true);
-                f.ToAddress = new Faker().Address.StreetAddress(true);
-            });
-
-            addresses = addresses.OrderBy(o => o.EventDate).ThenBy(o => o.EventType).ToList();
-
-            return Ok(addresses.AsQueryable());
+            var events = _orderService.GetOrderShipmentEvents(orderId);
+            return Ok(events.AsQueryable());
         }
     }
 }

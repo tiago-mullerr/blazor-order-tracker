@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderTracker.Client", "Orde
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderTracker.Shared", "OrderTracker\Shared\OrderTracker.Shared.csproj", "{0BF85DD0-2E78-4FF7-A633-2A9231329547}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderTracker.Tests", "OrderTracker.Tests\OrderTracker.Tests.csproj", "{92129B24-B7D6-48B9-AAF6-C26ED1BF6049}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0BF85DD0-2E78-4FF7-A633-2A9231329547}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BF85DD0-2E78-4FF7-A633-2A9231329547}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BF85DD0-2E78-4FF7-A633-2A9231329547}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92129B24-B7D6-48B9-AAF6-C26ED1BF6049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92129B24-B7D6-48B9-AAF6-C26ED1BF6049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92129B24-B7D6-48B9-AAF6-C26ED1BF6049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92129B24-B7D6-48B9-AAF6-C26ED1BF6049}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

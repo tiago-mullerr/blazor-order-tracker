@@ -1,6 +1,7 @@
 ﻿using AutoBogus;
 using Bogus;
 using Microsoft.AspNetCore.Mvc;
+using OrderTracker.Server.Services;
 using OrderTracker.Shared.Models;
 
 namespace OrderTracker.Server.Controllers
@@ -9,20 +10,17 @@ namespace OrderTracker.Server.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
+        private readonly IProductService _productService;
+
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
-            var products = new AutoFaker<Product>().Generate(10);
-
-            products.ForEach(f =>
-            {
-                f.Title = new Faker().Commerce.ProductName();
-                f.Description = new Faker().Commerce.ProductDescription();
-                f.Price = new Faker().Finance.Amount((decimal)0.99);
-                f.Id = new Faker().Random.Int(1, 999);
-                f.Quantity = 1;
-            });
-
+            var products = _productService.GetProducts();
             return Ok(products);
         }
     }
